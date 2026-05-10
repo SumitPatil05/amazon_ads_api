@@ -1,0 +1,21 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# In the Render dashboard: New → Blueprint → connect this repo and apply.
+
+services:
+  - type: web
+    name: amazon-ads-api-mock
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      # Used to sign JWT access tokens and report download tokens — change in dashboard if you rotate.
+      - key: LWA_JWT_SECRET
+        generateValue: true
+      # Optional: force public URLs (custom domain). If unset, RENDER_EXTERNAL_URL is used automatically.
+      # - key: PUBLIC_BASE_URL
+      #   value: https://your-service.onrender.com
