@@ -7,10 +7,12 @@ services:
     runtime: python
     plan: free
     region: oregon
-    buildCommand: pip install -r requirements.txt
+    # Pin Python: 3.14 has no pydantic-core wheels yet → pip builds Rust → fails on Render (read-only cargo).
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /
     envVars:
+      # If the build log still shows Python 3.14, add this manually in the service → Environment (then Clear build cache & deploy).
       - key: PYTHON_VERSION
         value: "3.11.9"
       # Used to sign JWT access tokens and report download tokens — change in dashboard if you rotate.

@@ -15,7 +15,7 @@ A FastAPI + SQLite mock of the Amazon Ads API that mirrors the official endpoint
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 cp .env.example .env
 mkdir -p data storage/reports
 uvicorn app.main:app --reload --port 8080
@@ -36,7 +36,8 @@ The DB is auto-created and seeded on first run with 3 profiles, portfolios, and 
    - **Build command**: `pip install -r requirements.txt`
    - **Start command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 3. Add an environment variable **`LWA_JWT_SECRET`** (the blueprint can generate one). Optionally set **`PUBLIC_BASE_URL`** to your public URL if you use a custom domain; otherwise Render’s **`RENDER_EXTERNAL_URL`** is used automatically for report download links.
-4. Call the service at `https://<your-service>.onrender.com` — use that host for both the API and `POST /auth/o2/token` while testing against the mock.
+4. **Python version:** The service must use **Python 3.11 or 3.12** (not 3.14). The repo includes `runtime.txt` and `PYTHON_VERSION` in [`render.yaml`](render.yaml). If the build log still says **Python 3.14**, open the service → **Environment** → add **`PYTHON_VERSION`** = **`3.11.9`**, then **Manual Deploy → Clear build cache & deploy**.
+5. Call the service at `https://<your-service>.onrender.com` — use that host for both the API and `POST /auth/o2/token` while testing against the mock.
 
 **Notes:** SQLite and `storage/reports` live on the instance’s **ephemeral disk** — data resets on redeploy or sleep (fine for a demo mock). The free web tier **spins down** after idle; first request after sleep may take ~30s.
 
@@ -115,6 +116,7 @@ No changes to request bodies, response parsing, or polling loops should be requi
 ## Tests
 
 ```bash
+pip install -r requirements-dev.txt
 pytest -q
 ```
 
